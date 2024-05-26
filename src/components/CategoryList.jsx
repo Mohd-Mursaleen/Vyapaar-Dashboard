@@ -13,14 +13,41 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { styled } from "@mui/system";
+import { Pie } from "react-chartjs-2";
 
 const SubcategoryText = styled(ListItemText)({
   fontSize: "0.875rem",
   color: "rgba(0, 0, 0, 0.8)", // Darker text
 });
 
+const generatePieData = (subcategories) => ({
+  labels: subcategories ? Object.keys(subcategories) : [],
+  datasets: [
+    {
+      data: subcategories ? Object.values(subcategories) : [],
+      backgroundColor: [
+        "rgba(75, 192, 192, 0.6)",
+        "rgba(255, 99, 132, 0.6)",
+        "rgba(54, 162, 235, 0.6)",
+        "rgba(255, 206, 86, 0.6)",
+        "rgba(153, 102, 255, 0.6)",
+        "rgba(255, 159, 64, 0.6)",
+      ],
+    },
+  ],
+});
+
+const pieOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "right",
+    },
+  },
+};
+
 const CategoryList = ({ category }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const handleClick = () => {
     setOpen(!open);
@@ -39,21 +66,29 @@ const CategoryList = ({ category }) => {
             </Typography>
           </Box>
         </TableCell>
-        <TableCell>
-          &#8377;{" "}
-          {category.Subcategories.reduce((sum, sub) => sum + sub.value, 0)}
-        </TableCell>
+        <TableCell>&#8377; {category.total}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell colSpan={2} sx={{ padding: 0 }}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {category.Subcategories.map((sub, index) => (
-                <ListItem key={index} sx={{ padding: "2px 16px" }}>
-                  <SubcategoryText primary={`${sub.name}: ₹ ${sub.value}`} />
-                </ListItem>
-              ))}
-            </List>
+            <Box display="flex">
+              <List component="div" disablePadding sx={{ flex: 1 }}>
+                {category.subcategories &&
+                  Object.entries(category.subcategories).map(
+                    ([name, value], index) => (
+                      <ListItem key={index} sx={{ padding: "2px 16px" }}>
+                        <SubcategoryText primary={`${name}: ₹ ${value}`} />
+                      </ListItem>
+                    )
+                  )}
+              </List>
+              <Box sx={{ flex: 1, width: "200px", height: "200px" }}>
+                <Pie
+                  data={generatePieData(category.subcategories)}
+                  options={pieOptions}
+                />
+              </Box>
+            </Box>
           </Collapse>
         </TableCell>
       </TableRow>

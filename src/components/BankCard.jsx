@@ -14,7 +14,15 @@ const StyledCard = styled(Card)({
   maxWidth: 345,
   margin: "0 auto",
   marginBottom: "1rem", // Added margin bottom for spacing between cards
+  background: "linear-gradient(135deg, #6b73ff 0%, #000dff 100%)",
+  color: "white",
 });
+
+const getInitials = (name) => {
+  const words = name.split(" ");
+  const initials = words.map((word) => word.charAt(0)).join("");
+  return initials;
+};
 
 const BankCard = ({ accounts }) => {
   return (
@@ -27,8 +35,15 @@ const BankCard = ({ accounts }) => {
                 <Avatar
                   src={account.logo}
                   alt={account.bankName}
-                  sx={{ width: 56, height: 56, mr: 2 }}
-                />
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    mr: 2,
+                    bgcolor: account.logo ? "transparent" : "#3f51b5",
+                  }}
+                >
+                  {!account.logo && getInitials(account.bankName)}
+                </Avatar>
                 <Typography variant="h5" component="div">
                   {account.bankName}
                 </Typography>

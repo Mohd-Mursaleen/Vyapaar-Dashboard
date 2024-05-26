@@ -1,96 +1,77 @@
-// src/components/HeroComponent.js
+// src/components/HeroComponent.jsx
 import React from "react";
 import {
-  Container,
-  Typography,
   Box,
+  Typography,
   List,
   ListItem,
   ListItemText,
   Avatar,
+  Grid,
 } from "@mui/material";
 import { styled } from "@mui/system";
 
-const HeroContainer = styled(Box)({
-  background:
-    "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
+const GradientBox = styled(Box)({
+  background: "linear-gradient(135deg, #6b73ff 0%, #000dff 100%)",
   color: "white",
-  padding: "2rem 1rem",
+  padding: "20px",
   borderRadius: "8px",
-  textAlign: "center",
-});
-
-const DataContainer = styled(Box)({
-  marginTop: "1rem",
-  display: "flex",
-  justifyContent: "space-between",
-});
-
-const DataItem = styled(Box)({
-  fontSize: "1.5rem",
-  marginBottom: "1rem",
 });
 
 const HeroComponent = ({ accounts }) => {
-  const totalAmount = accounts.reduce(
-    (acc, account) => acc + account.balance,
+  const totalBalance = accounts.reduce(
+    (sum, account) => sum + (account.balance || 0),
     0
   );
   const numberOfAccounts = accounts.length;
 
+  const getInitials = (name) => {
+    const words = name.split(" ");
+    const initials = words.map((word) => word.charAt(0)).join("");
+    return initials;
+  };
+
   return (
-    <HeroContainer>
-      <Container>
-        <Typography variant="h3" component="h1" gutterBottom>
-          Dashboard Overview
-        </Typography>
-        <DataContainer>
-          <Box textAlign="left" width="40%">
-            <Typography variant="h6" gutterBottom>
-              Bank Accounts
-            </Typography>
-            <List>
-              {accounts.map((account, index) => (
-                <ListItem key={index} divider>
-                  <Avatar
-                    src={account.logo}
-                    alt={account.bankName}
-                    sx={{ width: 24, height: 24, mr: 2 }}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "https://via.placeholder.com/24";
-                    }}
-                  />
-                  <ListItemText
-                    primary={`${
-                      account.bankName
-                    }: ₹${account.balance.toLocaleString()}`}
-                    secondary={`Account Number: ${account.accountNumber}`}
-                    sx={{
-                      "& .MuiListItemText-secondary": {
-                        color: "rgba(255, 255, 255, 0.7)", // Off-white color
-                      },
-                    }}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-          <Box textAlign="right" width="55%">
-            <DataItem>
-              <Typography variant="h5">Total Amount</Typography>
-              <Typography variant="h6">
-                ₹{totalAmount.toLocaleString()}
-              </Typography>
-            </DataItem>
-            <DataItem>
-              <Typography variant="h5">Number of Active Accounts</Typography>
-              <Typography variant="h6">{numberOfAccounts}</Typography>
-            </DataItem>
-          </Box>
-        </DataContainer>
-      </Container>
-    </HeroContainer>
+    <GradientBox textAlign="center" my={2}>
+      <Typography variant="h4" gutterBottom>
+        User Accounts Overview
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        Total Balance: ₹ {totalBalance.toLocaleString()}
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        Number of Accounts: {numberOfAccounts}
+      </Typography>
+      <List>
+        {accounts.map((account, index) => (
+          <ListItem key={index}>
+            <Grid container alignItems="center">
+              <Grid item xs={2}>
+                <Avatar
+                  src={account.logo}
+                  alt={account.bankName}
+                  sx={{ bgcolor: account.logo ? "transparent" : "#3f51b5" }}
+                >
+                  {!account.logo && getInitials(account.bankName)}
+                </Avatar>
+              </Grid>
+
+              <Grid item xs={10}>
+                <ListItemText
+                  primary={`${
+                    account.bankName
+                  }: ₹ ${account.balance?.toLocaleString()}`}
+                  secondary={`Account Number: ${account.accountNumber}`}
+                  secondaryTypographyProps={{
+                    style: { color: "rgba(255, 255, 255, 0.7)" },
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </ListItem>
+        ))}
+      </List>
+    </GradientBox>
   );
 };
 

@@ -1,6 +1,6 @@
 // src/components/ChartComponent.js
 import React from "react";
-import { Bar } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
 
 // Register the components
@@ -18,10 +19,11 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
-const ChartComponent = ({ data }) => {
+const ChartComponent = ({ categories }) => {
   const colors = [
     "rgba(75, 192, 192, 0.6)",
     "rgba(255, 99, 132, 0.6)",
@@ -38,13 +40,11 @@ const ChartComponent = ({ data }) => {
   ];
 
   const chartData = {
-    labels: data.Categories.map((category) => category.name),
+    labels: categories.map((category) => category.name),
     datasets: [
       {
         label: "Total Expend",
-        data: data.Categories.map((category) =>
-          category.Subcategories.reduce((sum, sub) => sum + sub.value, 0)
-        ),
+        data: categories.map((category) => category.total),
         backgroundColor: colors,
       },
     ],
@@ -54,7 +54,7 @@ const ChartComponent = ({ data }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: "top",
+        position: "right",
       },
       title: {
         display: true,
@@ -64,8 +64,16 @@ const ChartComponent = ({ data }) => {
   };
 
   return (
-    <div style={{ marginTop: 20 }}>
-      <Bar data={chartData} options={options} />
+    <div
+      style={{
+        position: "relative",
+        marginTop: 20,
+        width: "70%",
+        height: "70vh",
+        left: "15rem",
+      }}
+    >
+      <Pie data={chartData} options={options} />
     </div>
   );
 };
